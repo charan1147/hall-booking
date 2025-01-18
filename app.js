@@ -1,22 +1,30 @@
-
 const express = require('express');
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config(); 
 
-const connectDB = require("./config/db");
 const roomRoutes = require('./routes/roomRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
-
-const PORT = process.env.PORT || 5000; 
-const MONGO_URI = process.env.MONGO_URI;
 
 const app = express();
 app.use(express.json());
 
-connectDB(MONGO_URI);
+const PORT = 3000
+const MONGO_URI = "mongodb+srv://charanc1147:eK2ympxdVfglRIxK@cluster0.uffox.mongodb.net/";
 
-app.use('/rooms', roomRoutes);
-app.use('/bookings', bookingRoutes);
+const connectDB = async () => {
+    try {
+        await mongoose.connect(MONGO_URI);
+        console.log('MongoDB connected successfully');
+    } catch (error) {
+        console.error('MongoDB connection failed:');
+    }
+};
+
+connectDB();
+
+app.use('/api', roomRoutes);
+app.use('/api', bookingRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
